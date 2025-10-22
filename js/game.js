@@ -115,7 +115,7 @@ function onRightClickCell(event, elCell) {
   const currCell = gBoard[cellIndex.i][cellIndex.j]
   if (currCell.isMarked) {
     //model
-    currCell.gBoard[cellIndex.i][cellIndex.j] = false
+    gBoard[cellIndex.i][cellIndex.j].isMarked = false
     gGame.markedCount -= 1
     //DOM
     renderCell(cellIndex, COVER)
