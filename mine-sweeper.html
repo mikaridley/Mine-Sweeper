@@ -6,7 +6,18 @@
     <link rel="stylesheet" href="css/style.css" />
     <title>Mine Sweeper</title>
   </head>
-  <body>
+  <body onload="onInit()">
+    <h1>Mine Seeper</h1>
+    <div>
+        <button class="4"onclick="changeDifficulty(this)">lvl 4x4</button>
+        <button class="8"onclick="changeDifficulty(this)">lvl 8x8</button>
+        <button class="12"onclick="changeDifficulty(this)">lvl 12x12</button>
+    </div>
+    <table class="board"></table>
+
     <script src="js/game.js"></script>
+    <script src="js/mines.js"></script>
+    <script src="js/utils.js"></script>
+  </body>
   </body>
 </html>
