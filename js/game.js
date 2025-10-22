@@ -10,9 +10,10 @@ const gGame = {
   isOn: false,
   revealedCount: 0,
   markedCount: 0,
-  secsPasses: 0,
+  timer: 0,
 }
 var gBoard
+var gTimerId
 
 function onInit() {
   gGame.isOn = true
@@ -54,29 +55,9 @@ function createBoard(size) {
   return board
 }
 
-function renderBoard() {
-  const elBoard = document.querySelector('.board')
-  var strHTML = ''
-
-  for (var i = 0; i < gLevel.SIZE; i++) {
-    strHTML += '<tr>\n'
-    for (var j = 0; j < gLevel.SIZE; j++) {
-      const currCell = gBoard[i][j]
-      var cellClass = getClassName({ i: i, j: j })
-      var value = currCell.isMine ? MINE : ''
-      var onClicks =
-        'oncontextmenu="onRightClickCell(event,this)" onclick="onClickCell(this)"'
-      strHTML += `\t<td ${onClicks} class="cell ${cellClass}">${value}`
-      strHTML += '</td>\n'
-    }
-    strHTML += '</tr>\n'
-  }
-  elBoard.innerHTML = strHTML
-}
-
 function onClickCell(elCell) {
   if (!gGame.isOn) return
-
+  if (!gTimerId) startAndRenderTimer()
   //reveal
   var index = getIndexFromClass(elCell)
   var currCell = gBoard[index.i][index.j]
@@ -84,7 +65,9 @@ function onClickCell(elCell) {
   gBoard[index.i][index.j].isRevealed = true
   //DOM
   if (currCell.isMine) renderCell(index, MINE)
-  else renderCell(index, currCell.minesAroundCount)
+  else {
+    renderCell(index, currCell.minesAroundCount)
+  }
 
   //checks
   var currCellInnerSpace = currCell.isMine ? MINE : currCell.minesAroundCount
@@ -131,8 +114,9 @@ function onRightClickCell(event, elCell) {
 
 function gameOver() {
   console.log('Game Over')
+  clearInterval(gTimerId)
   revealAllMines()
-  resetGame()
+  // resetGame()
 }
 
 function checkWin() {
@@ -149,6 +133,7 @@ function resetGame() {
     else gGame[key] = 0
   }
   gLevel.LIVES = 3
+  resetTimer()
 }
 
 function changeDifficulty(elButton) {
@@ -157,12 +142,16 @@ function changeDifficulty(elButton) {
     { difficulty: 8, mines: 14 },
     { difficulty: 12, mines: 32 },
   ]
-  var difficulty = +elButton.className
+
+  var dashIndex = elButton.className.indexOf('-')
+  var difficulty = elButton.className
+  difficulty = difficulty.substring(dashIndex + 1)
   gLevel.SIZE = difficulty
   for (var i = 0; i < difficulties.length; i++) {
     if (difficulty === +difficulties[i].difficulty)
       gLevel.MINES = difficulties[i].mines
   }
+  resetGame()
   onInit()
 }
 
@@ -174,8 +163,29 @@ function coverAllCells() {
   }
 }
 
-function unRevealMine(index) {
-  setTimeout(() => {
-    renderCell(index, COVER)
-  }, 1000)
+function startAndRenderTimer() {
+  gTimerId = setInterval(() => {
+    gGame.timer += 1
+    var elTimer = document.querySelector('.curr-time')
+    elTimer.innerText = formatTimer(gGame.timer)
+  }, 31)
+}
+
+function formatTimer(time) {
+  const totalMs = time * 10
+
+  let miliSeconds = Math.floor((totalMs % 1000) / 10)
+  let seconds = Math.floor((totalMs % 60000) / 1000)
+  let minutes = Math.floor((totalMs % 3600000) / 60000)
+
+  if (miliSeconds < 10) miliSeconds = '0' + miliSeconds
+  if (seconds < 10) seconds = '0' + seconds
+  if (minutes < 10) minutes = '0' + minutes
+
+  return `${minutes}:${seconds}:${miliSeconds}`
+}
+
+function resetTimer() {
+  var elTimer = document.querySelector('.curr-time')
+  elTimer.innerText = '00:00:00'
 }

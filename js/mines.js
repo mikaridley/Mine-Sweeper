@@ -1,7 +1,9 @@
 'use strics'
-const MINE = '*'
-const COVER = '<img src="img/unrevealed.png" alt="unreveal" />'
-const FLAG = '<img src="img/flag.png" alt="unreveal" />'
+const MINE = '<img src="img/Cell - Mine.png" alt="mine" />'
+const COVER = '<img src="img/Cell - Unrevealed.png" alt="cover" />'
+const FLAG = '<img src="img/Cell - Flag.png" alt="flag" />'
+const HEART = '<img src="img/Heart - Full.png" alt="heart" />'
+const EMPTY_HEART = '<img src="img/Heart - Empty.png" alt="empty heart" />'
 
 function createRandomMines(amount, index) {
   for (var i = 0; i < amount; i++) {
@@ -82,4 +84,11 @@ function areAllMineAreFlagged() {
     }
   }
   return true
+}
+
+function unRevealMine(index) {
+  setTimeout(() => {
+    renderCell(index, COVER)
+  }, 1000)
+  renderHearts()
 }
