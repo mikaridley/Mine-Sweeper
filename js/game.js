@@ -12,8 +12,14 @@ const gGame = {
   markedCount: 0,
   timer: 0,
 }
+
+const gModes = {
+  hints: { state: false, amount: 3 },
+}
+
 var gBoard
 var gTimerId
+var gBestScore = localStorage.getItem('Best Score')
 
 function onInit() {
   gGame.isOn = true
@@ -21,14 +27,10 @@ function onInit() {
   console.table(gBoard)
   renderBoard(gBoard)
   coverAllCells()
-
-  //-------------------------------to check
-  //   gBoard[0][0].isMine = true
-  //   renderCell({ i: 0, j: 0 }, MINE)
-  //   gBoard[3][3].isMine = true
-  //   renderCell({ i: 3, j: 3 }, MINE)
-  //   createNumbers()
-  //-------------------------------to check
+  renderFlagsLeft()
+  renderHearts()
+  renderClickedEasyButton()
+  renderBestScore()
 }
 
 function createCell() {
@@ -58,14 +60,24 @@ function createBoard(size) {
 function onClickCell(elCell) {
   if (!gGame.isOn) return
   if (!gTimerId) startAndRenderTimer()
-  //reveal
+  if (gModes.hints.state) {
+    getHints(elCell)
+    return
+  }
   var index = getIndexFromClass(elCell)
   var currCell = gBoard[index.i][index.j]
-  //modal
-  gBoard[index.i][index.j].isRevealed = true
-  //DOM
-  if (currCell.isMine) renderCell(index, MINE)
-  else {
+  //if the cell is already revealed
+  if (currCell.isRevealed) return
+  //if a marked cell was clicked
+  if (currCell.isMarked) {
+    gBoard[index.i][index.j].isMarked = false
+    gGame.markedCount -= 1
+    renderFlagsLeft()
+  }
+  //reveal if its a mine or a number
+  if (currCell.isMine) {
+    renderCell(index, MINE)
+  } else {
     renderCell(index, currCell.minesAroundCount)
   }
 
@@ -73,7 +85,9 @@ function onClickCell(elCell) {
   var currCellInnerSpace = currCell.isMine ? MINE : currCell.minesAroundCount
   //------------------------------------------------
   if (gGame.revealedCount === 0) {
+    //model game must
     gGame.revealedCount += 1
+    gBoard[index.i][index.j].isRevealed = true
     createMinesAndNumbers(index)
   } //------------------------------------------------
   else if (currCellInnerSpace === MINE) {
@@ -82,11 +96,15 @@ function onClickCell(elCell) {
     else gameOver()
   } //------------------------------------------------
   else if (currCellInnerSpace === 0) {
-    //model+DOM
+    //model game must
+    gGame.revealedCount += 1
+    gBoard[index.i][index.j].isRevealed = true
     revealAllNeighbors(index)
   } //------------------------------------------------
-  else {
+  else if (currCellInnerSpace > 0) {
+    //model game must
     gGame.revealedCount += 1
+    gBoard[index.i][index.j].isRevealed = true
   }
   checkWin()
 }
@@ -96,13 +114,17 @@ function onRightClickCell(event, elCell) {
   if (!gGame.isOn) return
   var cellIndex = getIndexFromClass(elCell)
   const currCell = gBoard[cellIndex.i][cellIndex.j]
+  if (currCell.isRevealed) return
   if (currCell.isMarked) {
     //model
     gBoard[cellIndex.i][cellIndex.j].isMarked = false
     gGame.markedCount -= 1
+
     //DOM
     renderCell(cellIndex, COVER)
   } else {
+    //dont let it pass down the mines amount
+    if (gGame.markedCount >= gLevel.MINES) return
     //model
     gBoard[cellIndex.i][cellIndex.j].isMarked = true
     gGame.markedCount += 1
@@ -110,21 +132,37 @@ function onRightClickCell(event, elCell) {
     renderCell(cellIndex, FLAG)
     checkWin()
   }
+  renderFlagsLeft()
 }
 
 function gameOver() {
+  gGame.isOn = false
   console.log('Game Over')
   clearInterval(gTimerId)
-  revealAllMines()
-  // resetGame()
+  //render red mines
+  revealAllMines('lose')
+  //render love restart button
+  renderRestartButton('Lose')
 }
 
 function checkWin() {
   var cellNeedsToReveal = gLevel.SIZE ** 2 - gLevel.MINES
-  if (gGame.revealedCount !== cellNeedsToReveal) return
-  console.log('YOU WIN:')
-  gGame.isOn = false
-  revealAllMines()
+  if (
+    gGame.revealedCount === cellNeedsToReveal &&
+    gGame.markedCount === gLevel.MINES
+  ) {
+    gGame.isOn = false
+    console.log('YOU WIN:')
+    //reveal mines
+    revealAllMines('win')
+    //clear time
+    clearInterval(gTimerId)
+    //render restart win button
+    renderRestartButton('Win')
+    //check best score
+    saveBestScoreOnLocalStorage()
+    renderBestScore()
+  }
 }
 
 function resetGame() {
@@ -132,8 +170,23 @@ function resetGame() {
     if (gGame[key] === true) gGame[key] = false
     else gGame[key] = 0
   }
+  console.log('gGame:', gGame)
   gLevel.LIVES = 3
-  resetTimer()
+  //model hints
+  gModes.hints.amount = 3
+  gModes.hints.state = false
+  //DOM hints
+  renderModeHeader('hints')
+  var elBtn = document.querySelector('.hints')
+  elBtn.innerHTML = HINTS_OFF
+  //model stop timer
+  clearInterval(gTimerId)
+  gGame.timer = 0
+  //DOM stop timer
+  renderResetedTimer()
+  //DOM restart button
+  renderRestartButton('Happy')
+  onInit()
 }
 
 function changeDifficulty(elButton) {
@@ -146,13 +199,17 @@ function changeDifficulty(elButton) {
   var dashIndex = elButton.className.indexOf('-')
   var difficulty = elButton.className
   difficulty = difficulty.substring(dashIndex + 1)
-  gLevel.SIZE = difficulty
+  gLevel.SIZE = +difficulty
   for (var i = 0; i < difficulties.length; i++) {
-    if (difficulty === +difficulties[i].difficulty)
+    if (+difficulty === difficulties[i].difficulty)
       gLevel.MINES = difficulties[i].mines
   }
   resetGame()
   onInit()
+  //render clicked buttons
+  if (+difficulty === 4) renderClickedEasyButton(elButton)
+  if (+difficulty === 8) renderClickedMediumButton(elButton)
+  if (+difficulty === 12) renderClickedHardButton(elButton)
 }
 
 function coverAllCells() {
@@ -183,9 +240,4 @@ function formatTimer(time) {
   if (minutes < 10) minutes = '0' + minutes
 
   return `${minutes}:${seconds}:${miliSeconds}`
-}
-
-function resetTimer() {
-  var elTimer = document.querySelector('.curr-time')
-  elTimer.innerText = '00:00:00'
 }

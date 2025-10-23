@@ -22,7 +22,7 @@ body {
   gap: 60rem;
   padding: 0.8rem;
   padding-top: 3rem;
-  padding-bottom: 5rem;
+  padding-bottom: 3rem;
 }
 
 .hearts {
@@ -51,7 +51,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  /* font-family: monospace; */
+  color: white;
 }
 
 .best-score {
@@ -60,10 +60,22 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
+  color: #cb2525;
 }
 
 .mode {
-  background-color: rgb(245, 228, 223);
+  font-size: 1.5rem;
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  color: white;
+  font-weight: bold;
+  align-items: center;
+}
+
+.mode img {
+  width: 3.5rem;
+  cursor: pointer;
 }
 
 .second-header {

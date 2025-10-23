@@ -14,9 +14,8 @@ function getRandomIntEx(min, exMax) {
 
 function getRandomFreeSpace(index) {
   //arr with the index and its neighbores
-  var notFreeCells = revealAllNeighbors(index)
+  var notFreeCells = getAllNeighbors(index)
   notFreeCells.push(index)
-
   var freeSpaces = []
   for (var i = 0; i < gLevel.SIZE; i++) {
     for (var j = 0; j < gLevel.SIZE; j++) {
@@ -31,13 +30,6 @@ function getRandomFreeSpace(index) {
 function getClassName(position) {
   const cellClass = `cell-${position.i}-${position.j}`
   return cellClass
-}
-
-function renderCell(location, value) {
-  const cellSelector = '.' + getClassName(location)
-  const elCell = document.querySelector(cellSelector)
-  elCell.innerHTML = value
-  addClass(elCell, value)
 }
 
 function addClass(elCell, value) {

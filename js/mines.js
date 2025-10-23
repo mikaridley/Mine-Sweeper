@@ -1,13 +1,14 @@
 'use strics'
-const MINE = '<img src="img/Cell - Mine.png" alt="mine" />'
-const COVER = '<img src="img/Cell - Unrevealed.png" alt="cover" />'
-const FLAG = '<img src="img/Cell - Flag.png" alt="flag" />'
-const HEART = '<img src="img/Heart - Full.png" alt="heart" />'
-const EMPTY_HEART = '<img src="img/Heart - Empty.png" alt="empty heart" />'
 
 function createRandomMines(amount, index) {
+  var minesLocations = []
   for (var i = 0; i < amount; i++) {
     var randomSpace = getRandomFreeSpace(index)
+    //prevent duplicates locations
+    while (isObjinObjArr(minesLocations, randomSpace)) {
+      var randomSpace = getRandomFreeSpace(index)
+    }
+    minesLocations.push(randomSpace)
     gBoard[randomSpace.i][randomSpace.j].isMine = true
     console.log('mine in:', randomSpace)
   }
@@ -45,24 +46,23 @@ function countNearbyMines(iIndex, jIndex) {
   return count
 }
 
-function revealAllMines() {
+function revealAllMines(state) {
+  var elMine = state === 'win' ? MINE : MINE_RED
   for (var i = 0; i < gLevel.SIZE; i++) {
     for (var j = 0; j < gLevel.SIZE; j++) {
       const currCell = gBoard[i][j]
-      if (currCell.isMine) renderCell({ i, j }, MINE)
+      if (currCell.isMine) renderCell({ i, j }, elMine)
     }
   }
 }
 
 function revealAllNeighbors(index) {
-  var allNeighbors = []
   for (var i = index.i - 1; i <= index.i + 1; i++) {
     if (i < 0 || i >= gLevel.SIZE) continue
     for (var j = index.j - 1; j <= index.j + 1; j++) {
       const currCell = gBoard[i][j]
       if (j < 0 || j >= gLevel.SIZE) continue
       if (i === index.i && j === index.j) continue
-      allNeighbors.push({ i, j })
       //   model
       if (!currCell.isRevealed) {
         gGame.revealedCount += 1
@@ -71,6 +71,18 @@ function revealAllNeighbors(index) {
 
       //DOM
       renderCell({ i, j }, currCell.minesAroundCount)
+    }
+  }
+}
+
+function getAllNeighbors(index) {
+  var allNeighbors = []
+  for (var i = index.i - 1; i <= index.i + 1; i++) {
+    if (i < 0 || i >= gLevel.SIZE) continue
+    for (var j = index.j - 1; j <= index.j + 1; j++) {
+      if (j < 0 || j >= gLevel.SIZE) continue
+      if (i === index.i && j === index.j) continue
+      allNeighbors.push({ i, j })
     }
   }
   return allNeighbors

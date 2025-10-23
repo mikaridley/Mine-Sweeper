@@ -18,30 +18,36 @@
       </div>
       <div class="timer">
         <div class="curr-time">00:00:00</div>
-        <div class="best-score">BEST:00:00:00</div>
+        <div class="best-score">BEST:<span>00:00:00</span></div>
       </div>
-      <div class="mode">mode</div>
+      <div class="mode">
+        <div>EDITOR MODE</div>
+        <div><img src="img/Editor Mode - X.png" alt="flag" /></div>
+      </div>
     </div>
 
     <div class="second-header">
       <div class="button">
-        <div class="btn-image"><img src="img/Undo Button.png" alt="Undo Button" /></div>
+        <div onclick="renderClickedUndoButton(this)"class="btn-image undo"><img src="img/Undo Button.png" alt="Undo Button" /></div>
         <h2>3 AVAILABLE</h2>
       </div>
       <div class="button">
-        <div class="btn-image"><img src="img/Hints Button - Off.png" alt="Hints Button - Off" /></div>
+        <div title="Clicking on a cell reveals it and its neighbors for 1 second
+        "onclick="renderHintsButtonToggle()"
+        class="btn-image hints">
+        <img src="img/Hints Button - Off.png" alt="Hints Button - Off" /></div>
+        <h2 class="hints"><span>3</span> AVAILABLE</h2>
+      </div>
+      <div class="button">
+        <div onclick="renderClickedSafeButton(this)"class="btn-image safe"><img src="img/Safe Click Button.png" alt="Safe Click Button" /></div>
         <h2>3 AVAILABLE</h2>
       </div>
       <div class="button">
-        <div class="btn-image"><img src="img/Safe Click Button.png" alt="Safe Click Button" /></div>
-        <h2>3 AVAILABLE</h2>
-      </div>
-      <div class="button">
-        <div class="btn-image"><img src="img/Mega Hint Button.png" alt="Mega Hint Button" /></div>
+        <div onclick="renderClickedMegaButton(this)"class="btn-image mega"><img src="img/Mega Hint Button.png" alt="Mega Hint Button" /></div>
         <h2>1 AVAILABLE</h2>
       </div>
       <div class="button">
-        <div class="btn-image"><img src="img/Exterminator Button.png" alt="Exterminator Button" /></div>
+        <div onclick="renderClickedExtButton(this)"class="btn-image ext"><img src="img/Exterminator Button.png" alt="Exterminator Button" /></div>
         <h2>1 AVAILABLE</h2>
       </div>
     </div>
@@ -49,20 +55,25 @@
     <div class="body">
       <div class="left-options">
         <div class="difficulties">
-          <div class="diff-4" onclick="changeDifficulty(this)">EASY 4x4</div>
-          <div class="diff-8" onclick="changeDifficulty(this)">MEDIUM 8x8</div>
-          <div class="diff-12" onclick="changeDifficulty(this)">HARD 12x12</div>
+          <div class="diff-4" onclick="changeDifficulty(this)">EASY<br>4x4</div>
+          <div class="diff-8" onclick="changeDifficulty(this)">MEDIUM<br>8x8</div>
+          <div class="diff-12" onclick="changeDifficulty(this)">HARD<br>12x12</div>
         </div>
-        <div class="dark-mode"><img src="img/Mode - Light.png" alt="light mode" /></div>
-        <div class="restart">RESTART</div>
+        <div onclick="renderDarkMoreBtn(this)"class="dark-mode"><img src="img/Mode - Light.png" alt="light mode" /></div>
+        <div onclick="resetGame()" class="restart">RESTART</div>
       </div>
+
       <div><table class="board"></table></div>
+
       <div class="right-options">
         <div class="flags-left">
-          <div class="flag-pic">flag PIC</div>
+          <div class="flag-pic"><img src="img/Flag Icon.png" alt="flag" /></div>
           <div class="flags-amount">10</div>
         </div>
-        <div class="mouse-pic"></div>
+        <div class="mouse-pic">
+          <div><img src="img/RMC to Flag Cell.png" alt="flag" /></div>
+          <div>TO FLAG A CELL</div>
+        </div>
       </div>
     </div>
 
@@ -72,6 +83,8 @@
     <script src="js/mines.js"></script>
     <script src="js/utils.js"></script>
     <script src="js/render.js"></script>
+    <script src="js/img.js"></script>
+    <script src="js/game-helpers.js"></script>
   </body>
   </body>
 </html>
