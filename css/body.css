@@ -1,68 +1,81 @@
 .body {
-  position: relative;
   min-height: calc(100vh - 450px);
+  position: relative;
 }
 
 .left-options {
+  width: 20rem;
+  padding: 10px;
+
+  color: white;
+
   position: absolute;
   left: 20px;
   bottom: 20px;
-  width: 20rem;
-  padding: 10px;
-  color: white;
 }
 
 .difficulties {
+  font-size: 1rem;
+
+  gap: 0.5rem;
+
   display: flex;
   justify-content: center;
-  gap: 0.5rem;
   align-items: center;
-  font-size: 1rem;
 }
 
 .diff-4 {
   height: 6rem;
   width: 10rem;
+
   background-image: url('../img/Easy Button.png'); /* image path */
   background-size: cover;
   background-size: contain;
   background-position: center;
   background-repeat: no-repeat;
-  cursor: pointer;
-  text-align: center;
+
   display: flex;
+  text-align: center;
   align-items: center;
   justify-content: center;
+
+  cursor: pointer;
 }
 
 .diff-8 {
   height: 6rem;
   width: 10rem;
+
   background-image: url('../img/Medium Button.png'); /* image path */
   background-size: cover;
   background-size: contain;
   background-position: center;
   background-repeat: no-repeat;
-  cursor: pointer;
-  text-align: center;
+
   display: flex;
+  text-align: center;
   align-items: center;
   justify-content: center;
+
+  cursor: pointer;
 }
 
 .diff-12 {
   height: 6rem;
   width: 10rem;
+
   background-image: url('../img/Hard Button.png'); /* image path */
   background-size: cover;
   background-size: contain;
   background-position: center;
   background-repeat: no-repeat;
-  cursor: pointer;
-  text-align: center;
+
   display: flex;
+  text-align: center;
   align-items: center;
   justify-content: center;
+
+  cursor: pointer;
 }
 
 .dark-mode img {
@@ -71,38 +84,44 @@
 }
 
 .restart {
-  margin-top: 0.5rem;
   height: 4.5rem;
   width: 13rem;
   padding-left: 2rem;
+  margin-top: 0.5rem;
+
   background-image: url('../img/Restart Button - Happy.png'); /* image path */
   background-size: cover;
   background-size: contain;
   background-position: center;
   background-repeat: no-repeat;
-  cursor: pointer;
+
+  font-size: 1.5rem;
+
   text-align: center;
   display: flex;
   align-items: center;
-  font-size: 1.5rem;
+
+  cursor: pointer;
 }
 
 .board {
-  background-color: rgb(47, 46, 46);
   margin: 20px auto;
+  background-color: rgb(47, 46, 46);
 }
 
 .board td {
   width: var(--cell-size);
   height: var(--cell-size);
   padding: 0;
-  margin: 0;
-  background-color: #c0c0c0;
   border: 1px solid #7a7a7a;
-  text-align: center;
+  margin: 0;
+
+  background-color: #c0c0c0;
+
   font-size: 1.3rem;
-  cursor: pointer;
+  text-align: center;
   user-select: none;
+  cursor: pointer;
 }
 
 .board td:hover {
@@ -112,24 +131,27 @@
 .board td img {
   width: 100%;
   height: 100%;
+
   object-fit: cover;
   display: block;
 }
 
 .right-options {
+  width: 15rem;
+  padding: 10px;
+
   position: absolute;
   right: 20px;
   bottom: 20px;
-  width: 15rem;
-  padding: 10px;
 }
 
 .flags-left {
-  display: flex;
-  justify-content: center;
   gap: 1rem;
   color: white;
   font-weight: bold;
+
+  display: flex;
+  justify-content: center;
   align-items: center;
 }
 
@@ -142,12 +164,13 @@
 }
 
 .mouse-pic {
-  display: flex;
   gap: 0.5rem;
-  align-items: center;
-  color: white;
-  font-weight: bold;
   font-size: 1.3rem;
+  color: white;
+
+  display: flex;
+  align-items: center;
+  font-weight: bold;
 }
 
 .blue {

@@ -1,5 +1,5 @@
 'use strict'
-
+//random int----------------------------
 function getRandomInt(min, max) {
   min = Math.ceil(min)
   max = Math.floor(max)
@@ -11,7 +11,7 @@ function getRandomIntEx(min, exMax) {
   max = Math.floor(exMax)
   return Math.floor(Math.random() * (exMax - min + 1) + min)
 }
-
+//random free space----------------------------
 function getRandomFreeSpace(index) {
   //arr with the index and its neighbores
   var notFreeCells = getAllNeighbors(index)
@@ -26,7 +26,7 @@ function getRandomFreeSpace(index) {
   var randomIndex = getRandomInt(0, freeSpaces.length)
   return freeSpaces[randomIndex]
 }
-
+//class----------------------------
 function getClassName(position) {
   const cellClass = `cell-${position.i}-${position.j}`
   return cellClass
@@ -55,7 +55,7 @@ function getIndexFromClass(elCell) {
     }
   }
 }
-
+//arr obj----------------------------
 function isObjinObjArr(arr, obj) {
   for (var i = 0; i < arr.length; i++) {
     if (arr[i].i === obj.i && arr[i].j === obj.j) return true

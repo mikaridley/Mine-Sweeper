@@ -1,39 +1,30 @@
 'use strict'
-
-function renderCell(location, value) {
-  const cellSelector = '.' + getClassName(location)
-  const elCell = document.querySelector(cellSelector)
-  if (value === 0) elCell.innerHTML = ''
-  else elCell.innerHTML = value
-  addClass(elCell, value)
+//modal------------------------
+function renderModal(state) {
+  var msg =
+    state === 'lose'
+      ? 'SORRY...<br><span>YOU LOSE.</span><br>BETTER LUCK NEXT TIME'
+      : 'CONGRATULATIONS!<br><span>YOU WIN!</span><br>GO TRY TO GET BETTER SCORE'
+  var elModal = document.querySelector('.modal')
+  elModal.innerHTML = msg
+  elModal.hidden = false
+  var elModalSpan = document.querySelector('.modal span')
+  if (state === 'lose') elModalSpan.style.color = '#d53333'
+  else elModalSpan.style.color = '#3066b8'
+  setTimeout(() => {
+    elModal.hidden = true
+  }, 2000)
 }
-
-function renderResetedTimer() {
-  gTimerId = null
-  var elTimer = document.querySelector('.curr-time')
-  elTimer.innerText = '00:00:00'
+//alert------------------------
+function renderAlert(msg) {
+  var elModal = document.querySelector('.alert')
+  elModal.innerHTML = msg
+  elModal.hidden = false
+  setTimeout(() => {
+    elModal.hidden = true
+  }, 2500)
 }
-
-function renderBoard() {
-  const elBoard = document.querySelector('.board')
-  var strHTML = ''
-
-  for (var i = 0; i < gLevel.SIZE; i++) {
-    strHTML += '<tr>\n'
-    for (var j = 0; j < gLevel.SIZE; j++) {
-      const currCell = gBoard[i][j]
-      var cellClass = getClassName({ i: i, j: j })
-      var value = currCell.isMine ? MINE : ''
-      var onClicks =
-        'oncontextmenu="onRightClickCell(event,this)" onclick="onClickCell(this)"'
-      strHTML += `\t<td ${onClicks} class="cell ${cellClass}">${value}`
-      strHTML += '</td>\n'
-    }
-    strHTML += '</tr>\n'
-  }
-  elBoard.innerHTML = strHTML
-}
-
+//hearts----------------------------------------
 function renderHearts() {
   var strHtml = ''
   var elHearts = document.querySelector('.hearts')
@@ -46,7 +37,7 @@ function renderHearts() {
 
   elHearts.innerHTML = strHtml
 }
-
+//difficulty----------------------------------------
 function renderClickedEasyButton() {
   renderUnclickedDiffButtons()
   var elBtn = document.querySelector('.diff-4')
@@ -73,29 +64,45 @@ function renderUnclickedDiffButtons() {
   elBtn = document.querySelector('.diff-12')
   elBtn.style.backgroundImage = HARD_BTN
 }
-
+//restart----------------------------------------
 function renderRestartButton(state) {
   var elRestart = document.querySelector('.restart')
-  elRestart.style.backgroundImage = `url('../img/Restart Button - ${state}.png')`
+  elRestart.style.backgroundImage = `url('img/Restart Button - ${state}.png')`
 }
-
+//dark mode----------------------------------------
+function renderDarkMoreBtn(elBtn) {
+  var dashIndex = elBtn.innerHTML.indexOf('-') + 2
+  var state = elBtn.innerHTML.substring(dashIndex)
+  var elSecondHeader = document.querySelector('.second-header')
+  var h2 = document.querySelectorAll('h2')
+  if (state[0] === 'L') {
+    elBtn.innerHTML = DARK_MODE
+    document.documentElement.style.setProperty('--body-color', '#363636')
+    elSecondHeader.style.backgroundColor = '#232323'
+    for (var i = 0; i < h2.length; i++) {
+      h2[i].style.color = 'white'
+    }
+  } else {
+    elBtn.innerHTML = LIGHT_MODE
+    document.documentElement.style.setProperty('--body-color', '#b8b8ba')
+    elSecondHeader.style.backgroundColor = '#acacae'
+    for (var i = 0; i < h2.length; i++) {
+      h2[i].style.color = 'black'
+    }
+  }
+}
+//flags----------------------------------------
 function renderFlagsLeft() {
   var elFlg = document.querySelector('.flags-amount')
   elFlg.innerHTML = gLevel.MINES - gGame.markedCount
 }
-
-function renderDarkMoreBtn(elBtn) {
-  var dashIndex = elBtn.innerHTML.indexOf('-') + 2
-  var state = elBtn.innerHTML.substring(dashIndex)
-  if (state[0] === 'L') elBtn.innerHTML = DARK_MODE
-  else elBtn.innerHTML = LIGHT_MODE
+//modes-----------------------------------------------------------------------
+function renderModeHeader(classBtn) {
+  //DOM header
+  var elBtnHeader = document.querySelector(`h2.${classBtn} span`)
+  elBtnHeader.innerText = +gModes[classBtn].amount
 }
-
-// function renderClickedUndoButton(elBtn) {
-//   renderUnclickedModesButtons()
-//   elBtn.style.backgroundImage = "url('../img/Hard Button - Selected.png')"
-// }
-
+//hints-------------
 function renderHintsButtonToggle() {
   if (!gGame.isOn) return
   var elBtn = document.querySelector('.hints')
@@ -110,19 +117,65 @@ function renderHintsButtonToggle() {
   if (gModes.hints.state) elBtn.innerHTML = HINTS_ON
   else elBtn.innerHTML = HINTS_OFF
 }
-
-function renderModeHeader(classBtn) {
+//safe cell-------------
+function renderSafeButtonToggle() {
+  if (!gGame.isOn) return
+  if (gModes.safe.amount === 0) return
+  //model
+  gModes.safe.amount -= 1
   //DOM header
-  var elBtnHeader = document.querySelector(`h2.${classBtn} span`)
-  elBtnHeader.innerText = gModes.hints.amount
+  renderModeHeader('safe')
+  //no more hints
+  var elBtn = document.querySelector('.safe')
+  if (gModes.safe.amount === 0) {
+    elBtn.innerHTML = SAFE_CELL_USED
+  }
+  getSafeCell()
 }
-// function renderClickedSafeButton(elBtn) {
-//   renderUnclickedModesButtons()
-// }
+//undo-------------
+function renderUndoButtonToggle() {
+  if (!gGame.isOn) return
+  if (gModes.undo.amount === 0) return
+  //model
+  gModes.undo.amount -= 1
+  //DOM header
+  renderModeHeader('undo')
+  //no more hints
+  var elBtn = document.querySelector('.undo')
+  if (gModes.undo.amount === 0) {
+    elBtn.innerHTML = UNDO_USED
+  }
+  undoAMove()
+}
+//editor-------------
+function renderEditorModeToggle() {
+  var elEditor = document.querySelector('.editor-img')
+  if (!gGame.isOn) return
 
-// function renderClickedMegaButton(elBtn) {
-//   renderUnclickedModesButtons()
-// }
+  if (gModes.editor.isDone) {
+    elEditor.innerHTML = ETIDOR_X
+    return
+  }
+  if (!gModes.editor.isPossible) return
+  gModes.editor.clicked = !gModes.editor.clicked
+  if (gModes.editor.clicked) elEditor.innerHTML = ETIDOR_V
+  else elEditor.innerHTML = ETIDOR_X
+}
+//mega hint-------------
+function renderMegaButton() {
+  if (!gGame.isOn) return
+  if (gModes.mega.amount === 0) return
+  //alert
+  var msg = 'Choose 2 cells to uncover the area'
+  renderAlert(msg)
+  //modal
+  gModes.mega.amount -= 1
+  gModes.mega.state = true
+  //DOM
+  var elMega = document.querySelector('.mega')
+  elMega.innerHTML = MEGA_USED
+  renderModeHeader('mega')
+}
 
 // function renderClickedExtButton(elBtn) {
 //   renderUnclickedModesButtons()

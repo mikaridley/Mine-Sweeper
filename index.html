@@ -10,6 +10,9 @@
   </head>
   <body onload="onInit()">
 
+    <div hidden class="modal"></div>
+    <div hidden class="alert"></div>
+
     <div class="header">
       <div class="hearts">
         <div class="heart"><img src="img/Heart - Full.png" alt="heart" /></div>
@@ -20,36 +23,57 @@
         <div class="curr-time">00:00:00</div>
         <div class="best-score">BEST:<span>00:00:00</span></div>
       </div>
-      <div class="mode">
+      <div class="editor">
         <div>EDITOR MODE</div>
-        <div><img src="img/Editor Mode - X.png" alt="flag" /></div>
+        <div class="editor-img" onclick="renderEditorModeToggle()"><img src="img/Editor Mode - X.png" alt="editor mode" /></div>
       </div>
-    </div>
+    </div> 
 
     <div class="second-header">
+
       <div class="button">
-        <div onclick="renderClickedUndoButton(this)"class="btn-image undo"><img src="img/Undo Button.png" alt="Undo Button" /></div>
-        <h2>3 AVAILABLE</h2>
+        <div title="Undo last number reveal"
+        onclick="renderUndoButtonToggle()"
+        class="btn-image undo">
+        <img src="img/Undo Button.png" alt="Undo Button" />
       </div>
+        <h2 class="undo"><span>2</span> AVAILABLE</h2>
+      </div>
+
       <div class="button">
-        <div title="Clicking on a cell reveals it and its neighbors for 1 second
-        "onclick="renderHintsButtonToggle()"
+        <div title="Clicking on a cell reveals it and its neighbors for 1 second"
+        onclick="renderHintsButtonToggle()"
         class="btn-image hints">
-        <img src="img/Hints Button - Off.png" alt="Hints Button - Off" /></div>
+        <img src="img/Hints Button - Off.png" alt="Hints Button - Off" />
+        </div>
         <h2 class="hints"><span>3</span> AVAILABLE</h2>
       </div>
+
       <div class="button">
-        <div onclick="renderClickedSafeButton(this)"class="btn-image safe"><img src="img/Safe Click Button.png" alt="Safe Click Button" /></div>
-        <h2>3 AVAILABLE</h2>
+        <div title="A random safe cell will appear on the board"
+        onclick="renderSafeButtonToggle()"
+        class="btn-image safe">
+        <img src="img/Safe Click Button.png" alt="Safe Click Button" />
+        </div>
+        <h2 class="safe"><span>3</span> AVAILABLE</h2>
       </div>
+
       <div class="button">
-        <div onclick="renderClickedMegaButton(this)"class="btn-image mega"><img src="img/Mega Hint Button.png" alt="Mega Hint Button" /></div>
+        <div title="Reveal a chosen area for 2 seconds"
+        onclick="renderMegaButton()
+        "class="btn-image mega">
+        <img src="img/Mega Hint Button.png" alt="Mega Hint Button" />
+        </div>
+        <h2 class="mega"><span>1</span> AVAILABLE</h2>
+      </div>
+
+      <div class="button">
+        <div title="""
+        onclick="aaaa()
+        "class="btn-image ext"><img src="img/Exterminator Button.png" alt="Exterminator Button" /></div>
         <h2>1 AVAILABLE</h2>
       </div>
-      <div class="button">
-        <div onclick="renderClickedExtButton(this)"class="btn-image ext"><img src="img/Exterminator Button.png" alt="Exterminator Button" /></div>
-        <h2>1 AVAILABLE</h2>
-      </div>
+
     </div>
 
     <div class="body">
@@ -77,14 +101,12 @@
       </div>
     </div>
 
-
-
     <script src="js/game.js"></script>
-    <script src="js/mines.js"></script>
+    <script src="js/cells.js"></script>
     <script src="js/utils.js"></script>
     <script src="js/render.js"></script>
     <script src="js/img.js"></script>
-    <script src="js/game-helpers.js"></script>
+    <script src="js/game-modes.js"></script>
   </body>
   </body>
 </html>

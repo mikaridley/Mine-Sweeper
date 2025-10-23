@@ -10,16 +10,30 @@ const gGame = {
   isOn: false,
   revealedCount: 0,
   markedCount: 0,
-  timer: 0,
 }
 
 const gModes = {
   hints: { state: false, amount: 3 },
+  safe: { amount: 3 },
+  undo: { amount: 2, lastMove: null },
+  editor: {
+    clicked: false,
+    isPossible: true,
+    isStarted: false,
+    isDone: false,
+    minesCount: 0,
+  },
+  mega: { state: false, amount: 1, cellAmountNeeded: 2, indexes: [] },
 }
 
+const gTimer = {
+  id: null,
+  timer: 0,
+  bestScore4: localStorage.getItem('Best Score 4x4'),
+  bestScore8: localStorage.getItem('Best Score 8x8'),
+  bestScore12: localStorage.getItem('Best Score 12x12'),
+}
 var gBoard
-var gTimerId
-var gBestScore = localStorage.getItem('Best Score')
 
 function onInit() {
   gGame.isOn = true
@@ -57,15 +71,67 @@ function createBoard(size) {
   return board
 }
 
+function renderBoard() {
+  const elBoard = document.querySelector('.board')
+  var strHTML = ''
+
+  for (var i = 0; i < gLevel.SIZE; i++) {
+    strHTML += '<tr>\n'
+    for (var j = 0; j < gLevel.SIZE; j++) {
+      const currCell = gBoard[i][j]
+      var cellClass = getClassName({ i: i, j: j })
+      var value = currCell.isMine ? MINE : ''
+      var onClicks =
+        'oncontextmenu="onRightClickCell(event,this)" onclick="onClickCell(this)"'
+      strHTML += `\t<td ${onClicks} class="cell ${cellClass}">${value}`
+      strHTML += '</td>\n'
+    }
+    strHTML += '</tr>\n'
+  }
+  elBoard.innerHTML = strHTML
+}
+
 function onClickCell(elCell) {
   if (!gGame.isOn) return
-  if (!gTimerId) startAndRenderTimer()
+  var index = getIndexFromClass(elCell)
+  var currCell = gBoard[index.i][index.j]
+  //editor mode-----------------------------
+  if (
+    gModes.editor.clicked &&
+    gGame.revealedCount === 0 &&
+    !gModes.editor.isDone
+  )
+    gModes.editor.isStarted = true
+  if (gModes.editor.isStarted) {
+    insertMine(index)
+    gModes.editor.minesCount += 1
+    if (gModes.editor.minesCount === gLevel.MINES) {
+      createNumbers(index)
+      gModes.editor.isStarted = false
+      gModes.editor.isDone = true
+      renderEditorModeToggle()
+      //alert
+      var msg = "You've finished putting all the mines"
+      renderAlert(msg)
+    }
+    return
+  }
+  //--------------------------------------
+
+  //hints mode
   if (gModes.hints.state) {
     getHints(elCell)
     return
   }
-  var index = getIndexFromClass(elCell)
-  var currCell = gBoard[index.i][index.j]
+  //mega hint mode
+  if (gModes.mega.state && gModes.mega.cellAmountNeeded !== 0) {
+    gModes.mega.cellAmountNeeded -= 1
+    gModes.mega.indexes.push(index)
+    animateMegaHint(index)
+    if (gModes.mega.cellAmountNeeded === 0) getMegaHint()
+    return
+  }
+  if (!gTimer.id) startAndRenderTimer()
   //if the cell is already revealed
   if (currCell.isRevealed) return
   //if a marked cell was clicked
@@ -84,27 +150,33 @@ function onClickCell(elCell) {
   //checks
   var currCellInnerSpace = currCell.isMine ? MINE : currCell.minesAroundCount
   //------------------------------------------------
-  if (gGame.revealedCount === 0) {
-    //model game must
-    gGame.revealedCount += 1
-    gBoard[index.i][index.j].isRevealed = true
-    createMinesAndNumbers(index)
-  } //------------------------------------------------
-  else if (currCellInnerSpace === MINE) {
+  if (currCellInnerSpace === MINE) {
     gLevel.LIVES -= 1
     if (gLevel.LIVES >= 0) unRevealMine(index)
     else gameOver()
+  } //------------------------------------------------
+  else if (gGame.revealedCount === 0) {
+    //model game must
+    gGame.revealedCount += 1
+    gBoard[index.i][index.j].isRevealed = true
+    if (!gModes.editor.isDone) {
+      createRandomMines(gLevel.MINES, index)
+      createNumbers(index)
+    }
   } //------------------------------------------------
   else if (currCellInnerSpace === 0) {
     //model game must
     gGame.revealedCount += 1
     gBoard[index.i][index.j].isRevealed = true
-    revealAllNeighbors(index)
+    //expand all neighbors
+    revealExpendedNeighbors(index)
   } //------------------------------------------------
   else if (currCellInnerSpace > 0) {
     //model game must
     gGame.revealedCount += 1
     gBoard[index.i][index.j].isRevealed = true
+    //for undo mode
+    gModes.undo.lastMove = index
   }
   checkWin()
 }
@@ -135,16 +207,6 @@ function onRightClickCell(event, elCell) {
   renderFlagsLeft()
 }
 
-function gameOver() {
-  gGame.isOn = false
-  console.log('Game Over')
-  clearInterval(gTimerId)
-  //render red mines
-  revealAllMines('lose')
-  //render love restart button
-  renderRestartButton('Lose')
-}
-
 function checkWin() {
   var cellNeedsToReveal = gLevel.SIZE ** 2 - gLevel.MINES
   if (
@@ -156,13 +218,25 @@ function checkWin() {
     //reveal mines
     revealAllMines('win')
     //clear time
-    clearInterval(gTimerId)
+    clearInterval(gTimer.id)
     //render restart win button
     renderRestartButton('Win')
     //check best score
     saveBestScoreOnLocalStorage()
     renderBestScore()
+    renderModal('win')
   }
+}
+
+function gameOver() {
+  gGame.isOn = false
+  console.log('Game Over')
+  clearInterval(gTimer.id)
+  //render red mines
+  revealAllMines('lose')
+  //render love restart button
+  renderRestartButton('Lose')
+  renderModal('lose')
 }
 
 function resetGame() {
@@ -170,8 +244,24 @@ function resetGame() {
     if (gGame[key] === true) gGame[key] = false
     else gGame[key] = 0
   }
-  console.log('gGame:', gGame)
   gLevel.LIVES = 3
+  resetModes()
+  //model stop timer
+  clearInterval(gTimer.id)
+  gTimer.timer = 0
+  gTimer.bestScore4 = null
+  gTimer.bestScore8 = null
+  gTimer.bestScore12 = null
+  //DOM stop timer
+  renderResetedTimer()
+  //DOM restart button
+  renderRestartButton('Happy')
+  //hide modal
+  document.querySelector('.modal').hidden = true
+  onInit()
+}
+
+function resetModes() {
   //model hints
   gModes.hints.amount = 3
   gModes.hints.state = false
@@ -179,14 +269,35 @@ function resetGame() {
   renderModeHeader('hints')
   var elBtn = document.querySelector('.hints')
   elBtn.innerHTML = HINTS_OFF
-  //model stop timer
-  clearInterval(gTimerId)
-  gGame.timer = 0
-  //DOM stop timer
-  renderResetedTimer()
-  //DOM restart button
-  renderRestartButton('Happy')
-  onInit()
+
+  //model safe
+  gModes.safe.amount = 3
+  //DOM safe
+  renderModeHeader('safe')
+  var elBtn = document.querySelector('.safe')
+  elBtn.innerHTML = SAFE_CELL
+
+  //model safe
+  gModes.undo.amount = 2
+  gModes.undo.lastMove = null
+  //DOM safe
+  renderModeHeader('undo')
+  var elBtn = document.querySelector('.undo')
+  elBtn.innerHTML = UNDO
+  //editor mode
+  gModes.editor.isPossible = true
+  gModes.editor.minesCount = 0
+  gModes.editor.isDone = false
+  gModes.editor.isStarted = false
+  gModes.editor.clicked = false
+  //mega
+  var elMega = document.querySelector('.mega')
+  elMega.innerHTML = MEGA
+  gModes.mega.amount = 1
+  gModes.mega.state = false
+  gModes.mega.cellAmountNeeded = 2
+  gModes.mega.indexes = []
+  renderModeHeader('mega')
 }
 
 function changeDifficulty(elButton) {
@@ -210,34 +321,4 @@ function changeDifficulty(elButton) {
   if (+difficulty === 4) renderClickedEasyButton(elButton)
   if (+difficulty === 8) renderClickedMediumButton(elButton)
   if (+difficulty === 12) renderClickedHardButton(elButton)
-}
-
-function coverAllCells() {
-  for (var i = 0; i < gLevel.SIZE; i++) {
-    for (var j = 0; j < gLevel.SIZE; j++) {
-      renderCell({ i, j }, COVER)
-    }
-  }
-}
-
-function startAndRenderTimer() {
-  gTimerId = setInterval(() => {
-    gGame.timer += 1
-    var elTimer = document.querySelector('.curr-time')
-    elTimer.innerText = formatTimer(gGame.timer)
-  }, 31)
-}
-
-function formatTimer(time) {
-  const totalMs = time * 10
-
-  let miliSeconds = Math.floor((totalMs % 1000) / 10)
-  let seconds = Math.floor((totalMs % 60000) / 1000)
-  let minutes = Math.floor((totalMs % 3600000) / 60000)
-
-  if (miliSeconds < 10) miliSeconds = '0' + miliSeconds
-  if (seconds < 10) seconds = '0' + seconds
-  if (minutes < 10) minutes = '0' + minutes
-
-  return `${minutes}:${seconds}:${miliSeconds}`
 }
