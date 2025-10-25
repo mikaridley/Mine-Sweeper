@@ -14,13 +14,14 @@ function getRandomIntEx(min, exMax) {
 //random free space----------------------------
 function getRandomFreeSpace(index) {
   //arr with the index and its neighbores
-  var notFreeCells = getAllNeighbors(index)
+  var notFreeCells = getArrayOfNeighbors(index)
   notFreeCells.push(index)
   var freeSpaces = []
   for (var i = 0; i < gLevel.SIZE; i++) {
     for (var j = 0; j < gLevel.SIZE; j++) {
       var currObj = { i, j }
-      if (!isObjectinObjectArr(notFreeCells, currObj)) freeSpaces.push(currObj)
+      if (!isObjectinObjectArray(notFreeCells, currObj))
+        freeSpaces.push(currObj)
     }
   }
   var randomIndex = getRandomInt(0, freeSpaces.length)
@@ -32,7 +33,7 @@ function getClassName(position) {
   return cellClass
 }
 
-function addClass(elCell, value) {
+function addColorClass(elCell, value) {
   if (isNaN(value)) return
   var className
   if (+value === 1) className = 'blue'
@@ -56,7 +57,7 @@ function getIndexFromClass(elCell) {
   }
 }
 //arr obj----------------------------
-function isObjectinObjectArr(arr, obj) {
+function isObjectinObjectArray(arr, obj) {
   for (var i = 0; i < arr.length; i++) {
     if (arr[i].i === obj.i && arr[i].j === obj.j) return true
   }

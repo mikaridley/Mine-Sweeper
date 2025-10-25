@@ -1,6 +1,5 @@
 'use strict'
 
-const LOGO = '<img src="img/Logo.png" alt="mine" />'
 const MINE = '<img src="img/Cell - Mine.png" alt="mine" />'
 const MINE_RED = '<img src="img/Cell - Red Mine.png" alt="mine" />'
 const COVER = '<img src="img/Cell - Unrevealed.png" alt="cover" />'

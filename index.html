@@ -3,38 +3,53 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Sans&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="css/header.css" />
     <link rel="stylesheet" href="css/body.css" />
     <title>Mine Sweeper</title>
   </head>
   <body onload="onInit()">
 
-    <div hidden class="modal"></div>
+    <div hidden class="modal">
+      <div onclick="closeTheModal()"class="x">⇦</div>
+      <div class="msg"></div>
+    </div>
+
     <div hidden class="alert"></div>
 
     <div class="header">
-      <div class="hearts">
-        <div class="heart"><img src="img/Heart - Full.png" alt="heart" /></div>
-        <div class="heart"><img src="img/Heart - Full.png" alt="heart" /></div>
-        <div class="heart"><img src="img/Heart - Full.png" alt="heart" /></div>
+      <div class="timer-plus-hearts">
+        <div class="timer">
+          <div class="curr-time">00:00:00</div>
+          <div class="best-score">BEST: <span>00:00:00</span></div>
+        </div>
+        <div class="hearts">
+         <div class="heart"><img src="img/Heart - Full.png" alt="heart" /></div>
+          <div class="heart"><img src="img/Heart - Full.png" alt="heart" /></div>
+         <div class="heart"><img src="img/Heart - Full.png" alt="heart" /></div>
+        </div>
       </div>
-      <div class="timer">
-        <div class="curr-time">00:00:00</div>
-        <div class="best-score">BEST:<span>00:00:00</span></div>
+
+      <div class="logo"><img src="img/Logo.png" alt="heart" /></div>
+
+      <div class="right-header">
+        <div class="editor">
+          <div class="editor-text">EDITOR MODE</div>
+          <div class="editor-img" onclick="editorModeToggle()"><img src="img/Editor Mode - X.png" alt="editor mode" /></div>
+        </div>
+        <div class="rules-btn-space">
+          <div class="editor-text">HOW TO PLAY</div>
+          <div class="rules-btn"onclick="showRulesPage()"><img src="img/How_To_Play_Icon.png" alt="editor-x" /></div>
+        </div>
       </div>
-      <!-- <div class="logo"><img src="img/Logo.png" alt="heart" /></div> -->
-      <div class="editor">
-        <div>EDITOR MODE</div>
-        <div class="editor-img" onclick="renderEditorModeToggle()"><img src="img/Editor Mode - X.png" alt="editor mode" /></div>
-      </div>
+
     </div> 
 
     <div class="second-header">
 
       <div class="button">
         <div title="Undo last number reveal"
-        onclick="renderUndoButtonToggle()"
+        onclick="undoBtnToggle()"
         class="btn-image undo">
         <img src="img/Undo Button.png" alt="Undo Button" />
       </div>
@@ -43,7 +58,7 @@
 
       <div class="button">
         <div title="Clicking on a cell reveals it and its neighbors for 1 second"
-        onclick="renderHintsButtonToggle()"
+        onclick="hintBtnToggle()"
         class="btn-image hints">
         <img src="img/Hints Button - Off.png" alt="Hints Button - Off" />
         </div>
@@ -52,7 +67,7 @@
 
       <div class="button">
         <div title="A random safe cell will appear on the board"
-        onclick="renderSafeButtonToggle()"
+        onclick="useSafeCell()"
         class="btn-image safe">
         <img src="img/Safe Click Button.png" alt="Safe Click Button" />
         </div>
@@ -61,7 +76,7 @@
 
       <div class="button">
         <div title="Reveal a chosen area for 2 seconds"
-        onclick="renderMegaButton()
+        onclick="useMegaHint()
         "class="btn-image mega">
         <img src="img/Mega Hint Button.png" alt="Mega Hint Button" />
         </div>
@@ -70,7 +85,7 @@
 
       <div class="button">
         <div title="Removes 3 random mines from the board"
-        onclick="renderExtButtonToggle()
+        onclick="useExterminator()
         "class="btn-image exterminator"><img src="img/Exterminator Button.png" alt="Exterminator Button" />
         </div>
         <h2 class="exterminator"><span>1</span> AVAILABLE</h2>
@@ -85,7 +100,7 @@
           <div class="diff-8" onclick="changeDifficulty(this)">MEDIUM<br>8x8</div>
           <div class="diff-12" onclick="changeDifficulty(this)">HARD<br>12x12</div>
         </div>
-        <div onclick="renderDarkMoreBtn(this)"class="dark-mode"><img src="img/Mode - Light.png" alt="light mode" /></div>
+        <div onclick="darkModeBtnToggle(this)"class="dark-mode"><img src="img/Mode - Light.png" alt="light mode" /></div>
         <div onclick="resetGame()" class="restart">RESTART</div>
       </div>
 
@@ -103,10 +118,16 @@
       </div>
     </div>
 
+<div hidden class="black-screen"></div>
+
+<div hidden class="rules">
+  <div onclick="closeRules()"class="x">⇦</div>
+  <table></table>
+</div>
     <script src="js/game.js"></script>
     <script src="js/cells.js"></script>
     <script src="js/utils.js"></script>
-    <script src="js/render.js"></script>
+    <script src="js/ux-manager.js"></script>
     <script src="js/img.js"></script>
     <script src="js/game-modes.js"></script>
   </body>
