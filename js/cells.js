@@ -1,4 +1,4 @@
-'use strics'
+'use strict'
 //cells
 function coverAllCells() {
   for (var i = 0; i < gLevel.SIZE; i++) {
@@ -21,7 +21,7 @@ function createRandomMines(amount, index) {
   for (var i = 0; i < amount; i++) {
     var randomSpace = getRandomFreeSpace(index)
     //prevent duplicates locations
-    while (isObjinObjArr(minesLocations, randomSpace)) {
+    while (isObjectinObjectArr(minesLocations, randomSpace)) {
       var randomSpace = getRandomFreeSpace(index)
     }
     minesLocations.push(randomSpace)
@@ -46,6 +46,22 @@ function unRevealMine(index) {
   }, 1000)
   renderHearts()
 }
+
+function getAllMines() {
+  var mines = []
+  for (var i = 0; i < gLevel.SIZE; i++) {
+    for (var j = 0; j < gLevel.SIZE; j++) {
+      if (gBoard[i][j].isMine) mines.push({ i, j })
+    }
+  }
+  return mines
+}
+
+function setMinePerDiff() {
+  if (gLevel.SIZE === 4) gLevel.MINES = 2
+  if (gLevel.SIZE === 8) gLevel.MINES = 14
+  if (gLevel.SIZE === 12) gLevel.MINES = 32
+}
 //numbers--------------------------------------
 function createNumbers(index) {
   for (var i = 0; i < gLevel.SIZE; i++) {
@@ -56,6 +72,21 @@ function createNumbers(index) {
       if (!currCell.isMine) gBoard[i][j].minesAroundCount = minesNearby
       //DOM
       if (index.i === i && index.j === j) {
+      } else renderCell({ i, j }, COVER)
+    }
+  }
+}
+
+function createNumbersforExter() {
+  for (var i = 0; i < gLevel.SIZE; i++) {
+    for (var j = 0; j < gLevel.SIZE; j++) {
+      const currCell = gBoard[i][j]
+      var minesNearby = countNearbyMines(i, j)
+      //model
+
+      if (!currCell.isMine) gBoard[i][j].minesAroundCount = minesNearby
+      //DOM
+      if (currCell.isRevealed || currCell.isMarked) {
       } else renderCell({ i, j }, COVER)
     }
   }

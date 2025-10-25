@@ -8,8 +8,10 @@ const gLevel = {
 
 const gGame = {
   isOn: false,
+  isStarted: false,
   revealedCount: 0,
   markedCount: 0,
+  cellNeedsToReveal: 14,
 }
 
 const gModes = {
@@ -22,8 +24,10 @@ const gModes = {
     isStarted: false,
     isDone: false,
     minesCount: 0,
+    mines: [],
   },
   mega: { state: false, amount: 1, cellAmountNeeded: 2, indexes: [] },
+  exterminator: { amount: 1 },
 }
 
 const gTimer = {
@@ -43,8 +47,8 @@ function onInit() {
   coverAllCells()
   renderFlagsLeft()
   renderHearts()
-  renderClickedEasyButton()
   renderBestScore()
+  diffBtnClickedPerDiff()
 }
 
 function createCell() {
@@ -103,17 +107,35 @@ function onClickCell(elCell) {
   )
     gModes.editor.isStarted = true
   if (gModes.editor.isStarted) {
-    insertMine(index)
-    gModes.editor.minesCount += 1
+    if (!isObjectinObjectArr(gModes.editor.mines, index)) {
+      insertMine(index)
+      gModes.editor.minesCount += 1
+      //render flags
+      var elFlg = document.querySelector('.flags-amount')
+      elFlg.innerHTML = gLevel.MINES - gModes.editor.minesCount
+    } else {
+      gModes.editor.minesCount -= 1
+      renderCell(index, COVER)
+      gModes.editor.mines.pop()
+      //render flags
+      var elFlg = document.querySelector('.flags-amount')
+      elFlg.innerHTML = gLevel.MINES - gModes.editor.minesCount
+    }
     if (gModes.editor.minesCount === gLevel.MINES) {
-      createNumbers(index)
+      //let the mines stay on board for some sec
+      setTimeout(() => {
+        createNumbers(index)
+        coverAllCells()
+        renderFlagsLeft()
+      }, 2500)
       gModes.editor.isStarted = false
       gModes.editor.isDone = true
       renderEditorModeToggle()
       //alert
       var msg = "You've finished putting all the mines"
-      renderAlert(msg)
+      renderAlert(msg, 2.5)
     }
+    gModes.editor.clicked = false
     return
   }
   //--------------------------------------
@@ -156,6 +178,8 @@ function onClickCell(elCell) {
     else gameOver()
   } //------------------------------------------------
   else if (gGame.revealedCount === 0) {
+    gGame.isStarted = true
+    gModes.editor.isPossible = false
     //model game must
     gGame.revealedCount += 1
     gBoard[index.i][index.j].isRevealed = true
@@ -184,6 +208,8 @@ function onClickCell(elCell) {
 function onRightClickCell(event, elCell) {
   event.preventDefault() //disable the context menu
   if (!gGame.isOn) return
+  if (!gGame.isStarted) return
+  if (gModes.editor.clicked) return
   var cellIndex = getIndexFromClass(elCell)
   const currCell = gBoard[cellIndex.i][cellIndex.j]
   if (currCell.isRevealed) return
@@ -214,6 +240,7 @@ function checkWin() {
     gGame.markedCount === gLevel.MINES
   ) {
     gGame.isOn = false
+    gGame.isStarted = false
     console.log('YOU WIN:')
     //reveal mines
     revealAllMines('win')
@@ -230,6 +257,7 @@ function checkWin() {
 
 function gameOver() {
   gGame.isOn = false
+  gGame.isStarted = false
   console.log('Game Over')
   clearInterval(gTimer.id)
   //render red mines
@@ -284,20 +312,34 @@ function resetModes() {
   renderModeHeader('undo')
   var elBtn = document.querySelector('.undo')
   elBtn.innerHTML = UNDO
-  //editor mode
+  //editor mode model
   gModes.editor.isPossible = true
   gModes.editor.minesCount = 0
   gModes.editor.isDone = false
   gModes.editor.isStarted = false
   gModes.editor.clicked = false
-  //mega
-  var elMega = document.querySelector('.mega')
-  elMega.innerHTML = MEGA
+  gModes.editor.mines = []
+  //editor mode DOM
+  var elEditor = document.querySelector('.editor-img')
+  elEditor.innerHTML = ETIDOR_X
+
+  //mega model
   gModes.mega.amount = 1
   gModes.mega.state = false
   gModes.mega.cellAmountNeeded = 2
   gModes.mega.indexes = []
+  //mega DOM
+  var elMega = document.querySelector('.mega')
+  elMega.innerHTML = MEGA
   renderModeHeader('mega')
+  //exterminator model
+  gModes.exterminator.amount = 1
+  setMinePerDiff()
+  //exterminator DOM
+  var elMega = document.querySelector('.exterminator')
+  elMega.innerHTML = EXT
+  renderModeHeader('exterminator')
+  // gGame.cellNeedsToReveal = gLevel.SIZE ** 2 - gLevel.MINES
 }
 
 function changeDifficulty(elButton) {

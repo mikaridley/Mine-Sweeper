@@ -143,15 +143,15 @@ function undoAMove() {
 }
 //Editor Mode--------------------------------------
 function insertMine(index) {
+  gModes.editor.mines.push(index)
   gBoard[index.i][index.j].isMine = true
   renderCell(index, MINE)
-  //animation
-  setTimeout(() => {
-    renderCell(index, COVER)
-  }, 200)
 }
 //Mega hint--------------------------------------
 function getMegaHint() {
+  if (CheckMegaIndexes() === false) {
+    return
+  }
   //the timeout give the chosen yellow cell animation
   setTimeout(() => {
     var firstCell = gModes.mega.indexes[0]
@@ -172,8 +172,49 @@ function getMegaHint() {
       }
     }, 1500)
   }, 300)
+  //animate the mega button used while doing the act
+  setTimeout(() => {
+    var elMega = document.querySelector('.mega')
+    elMega.innerHTML = MEGA_USED
+    renderModeHeader('mega')
+  }, 1800)
 }
 
 function animateMegaHint(index) {
   renderCell(index, YELLOW_CELL)
+}
+
+function CheckMegaIndexes() {
+  var firstCell = gModes.mega.indexes[0]
+  var secondCell = gModes.mega.indexes[1]
+  if (firstCell.i > secondCell.i || firstCell.j > secondCell.j) {
+    var msg = 'Choose cells from top left to bottom right'
+    renderAlert(msg, 2)
+    renderCell(firstCell, COVER)
+    renderCell(secondCell, COVER)
+    //reser the mega model
+    gModes.mega.amount = 1
+    gModes.mega.state = false
+    gModes.mega.cellAmountNeeded = 2
+    gModes.mega.indexes = []
+    var elMega = document.querySelector('.mega')
+    elMega.innerHTML = MEGA
+    return false
+  }
+}
+//exterminator-----------------------------------
+function getExterminator() {
+  var msg = 'Boom💥'
+  renderAlert(msg, 1)
+  var minesToExter = 3
+  var mines = getAllMines()
+  for (var j = 0; j < minesToExter; j++) {
+    var randomInt = getRandomInt(0, mines.length)
+    gBoard[mines[randomInt].i][mines[randomInt].j].isMine = false
+    mines.splice(randomInt, 1)
+  }
+  gLevel.MINES = gLevel.MINES - minesToExter
+  gGame.cellNeedsToReveal = gLevel.SIZE ** 2 - gLevel.MINES
+  createNumbersforExter()
+  renderFlagsLeft()
 }

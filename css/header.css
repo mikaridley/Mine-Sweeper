@@ -12,6 +12,7 @@
 
 body {
   background-color: var(--body-color);
+  font-weight: bold;
 }
 
 .modal {
@@ -109,6 +110,10 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.logo img {
+  width: 10rem;
 }
 
 .editor {

@@ -20,7 +20,7 @@ function getRandomFreeSpace(index) {
   for (var i = 0; i < gLevel.SIZE; i++) {
     for (var j = 0; j < gLevel.SIZE; j++) {
       var currObj = { i, j }
-      if (!isObjinObjArr(notFreeCells, currObj)) freeSpaces.push(currObj)
+      if (!isObjectinObjectArr(notFreeCells, currObj)) freeSpaces.push(currObj)
     }
   }
   var randomIndex = getRandomInt(0, freeSpaces.length)
@@ -56,7 +56,7 @@ function getIndexFromClass(elCell) {
   }
 }
 //arr obj----------------------------
-function isObjinObjArr(arr, obj) {
+function isObjectinObjectArr(arr, obj) {
   for (var i = 0; i < arr.length; i++) {
     if (arr[i].i === obj.i && arr[i].j === obj.j) return true
   }

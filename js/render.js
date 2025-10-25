@@ -16,13 +16,15 @@ function renderModal(state) {
   }, 2000)
 }
 //alert------------------------
-function renderAlert(msg) {
+function renderAlert(msg, sec) {
+  gGame.isOn = false
   var elModal = document.querySelector('.alert')
   elModal.innerHTML = msg
   elModal.hidden = false
   setTimeout(() => {
     elModal.hidden = true
-  }, 2500)
+    gGame.isOn = true
+  }, sec * 1000)
 }
 //hearts----------------------------------------
 function renderHearts() {
@@ -42,27 +44,44 @@ function renderClickedEasyButton() {
   renderUnclickedDiffButtons()
   var elBtn = document.querySelector('.diff-4')
   elBtn.style.backgroundImage = EASY_BTN_CLICKED
+  elBtn.style.color = 'white'
+  //disable exterminator mode
+  var elBtn = document.querySelector('.exterminator')
+  elBtn.innerHTML = EXT_USED
+  var elBtnHeader = document.querySelector('h2.exterminator span')
+  elBtnHeader.innerText = 0
 }
 
 function renderClickedMediumButton() {
   renderUnclickedDiffButtons()
   var elBtn = document.querySelector('.diff-8')
   elBtn.style.backgroundImage = MEDIUM_BTN_CLICKED
+  elBtn.style.color = 'white'
 }
 
 function renderClickedHardButton() {
   renderUnclickedDiffButtons()
   var elBtn = document.querySelector('.diff-12')
   elBtn.style.backgroundImage = HARD_BTN_CLICKED
+  elBtn.style.color = 'white'
 }
 
 function renderUnclickedDiffButtons() {
   var elBtn = document.querySelector('.diff-4')
   elBtn.style.backgroundImage = EASY_BTN
+  elBtn.style.color = '#bdb8bd'
   elBtn = document.querySelector('.diff-8')
   elBtn.style.backgroundImage = MEDIUM_BTN
+  elBtn.style.color = '#bdb8bd'
   elBtn = document.querySelector('.diff-12')
   elBtn.style.backgroundImage = HARD_BTN
+  elBtn.style.color = '#bdb8bd'
+}
+
+function diffBtnClickedPerDiff() {
+  if (gLevel.SIZE === 4) renderClickedEasyButton()
+  if (gLevel.SIZE === 8) renderClickedMediumButton()
+  if (gLevel.SIZE === 12) renderClickedHardButton()
 }
 //restart----------------------------------------
 function renderRestartButton(state) {
@@ -105,6 +124,11 @@ function renderModeHeader(classBtn) {
 //hints-------------
 function renderHintsButtonToggle() {
   if (!gGame.isOn) return
+  if (!gGame.isStarted) {
+    var msg = 'Start to play first'
+    renderAlert(msg, 1)
+    return
+  }
   var elBtn = document.querySelector('.hints')
   if (gModes.hints.amount === 0) {
     elBtn.innerHTML = HINTS_USED
@@ -120,6 +144,11 @@ function renderHintsButtonToggle() {
 //safe cell-------------
 function renderSafeButtonToggle() {
   if (!gGame.isOn) return
+  if (!gGame.isStarted) {
+    var msg = 'Start to play first'
+    renderAlert(msg, 1)
+    return
+  }
   if (gModes.safe.amount === 0) return
   //model
   gModes.safe.amount -= 1
@@ -135,6 +164,11 @@ function renderSafeButtonToggle() {
 //undo-------------
 function renderUndoButtonToggle() {
   if (!gGame.isOn) return
+  if (!gGame.isStarted) {
+    var msg = 'Start to play first'
+    renderAlert(msg, 1)
+    return
+  }
   if (gModes.undo.amount === 0) return
   //model
   gModes.undo.amount -= 1
@@ -150,13 +184,16 @@ function renderUndoButtonToggle() {
 //editor-------------
 function renderEditorModeToggle() {
   var elEditor = document.querySelector('.editor-img')
-  if (!gGame.isOn) return
-
-  if (gModes.editor.isDone) {
+  if (gModes.editor.clicked) {
+    elEditor.innerHTML = ETIDOR_X
+    gModes.editor.clicked = !gModes.editor.clicked
+    resetGame()
+    return
+  }
+  if (gModes.editor.isDone || !gModes.editor.isPossible) {
     elEditor.innerHTML = ETIDOR_X
     return
   }
-  if (!gModes.editor.isPossible) return
   gModes.editor.clicked = !gModes.editor.clicked
   if (gModes.editor.clicked) elEditor.innerHTML = ETIDOR_V
   else elEditor.innerHTML = ETIDOR_X
@@ -164,31 +201,38 @@ function renderEditorModeToggle() {
 //mega hint-------------
 function renderMegaButton() {
   if (!gGame.isOn) return
+  if (!gGame.isStarted) {
+    var msg = 'Start to play first'
+    renderAlert(msg, 1)
+    return
+  }
   if (gModes.mega.amount === 0) return
   //alert
   var msg = 'Choose 2 cells to uncover the area'
-  renderAlert(msg)
+  renderAlert(msg, 2)
   //modal
   gModes.mega.amount -= 1
   gModes.mega.state = true
   //DOM
   var elMega = document.querySelector('.mega')
-  elMega.innerHTML = MEGA_USED
-  renderModeHeader('mega')
+  if (gModes.mega.state) elMega.innerHTML = MEGA_ON
 }
-
-// function renderClickedExtButton(elBtn) {
-//   renderUnclickedModesButtons()
-// }
-
-// function renderUnclickedModesButtons() {
-//   var elBtn = document.querySelector('.undo')
-//   elBtn.style.backgroundImage = "url('../img/Undo Button - Used.png')"
-//   elBtn = document.querySelector('.hints')
-//   elBtn.style.backgroundImage = "url('../img/Safe Click Button - Used.png')"
-//   elBtn = document.querySelector('.mega')
-//   elBtn.style.backgroundImage = "url('../img/Mega Hint Button - Used.png')"
-//   elBtn = document.querySelector('.ext')
-//   elBtn.style.backgroundImage =
-//     "url('../img/Exterminator Button - Used - Used.png')"
-// }
+//Exterminator-------------
+function renderExtButtonToggle() {
+  if (!gGame.isOn) return
+  if (!gGame.isStarted) {
+    var msg = 'Start to play first'
+    renderAlert(msg, 1)
+    return
+  }
+  if (gLevel.SIZE === 4) return
+  if (gModes.exterminator.amount === 0) return
+  //model
+  gModes.exterminator.amount -= 1
+  //DOM header
+  renderModeHeader('exterminator')
+  //no more hints
+  var elBtn = document.querySelector('.exterminator')
+  elBtn.innerHTML = EXT_USED
+  getExterminator()
+}

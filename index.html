@@ -23,6 +23,7 @@
         <div class="curr-time">00:00:00</div>
         <div class="best-score">BEST:<span>00:00:00</span></div>
       </div>
+      <!-- <div class="logo"><img src="img/Logo.png" alt="heart" /></div> -->
       <div class="editor">
         <div>EDITOR MODE</div>
         <div class="editor-img" onclick="renderEditorModeToggle()"><img src="img/Editor Mode - X.png" alt="editor mode" /></div>
@@ -68,10 +69,11 @@
       </div>
 
       <div class="button">
-        <div title="""
-        onclick="aaaa()
-        "class="btn-image ext"><img src="img/Exterminator Button.png" alt="Exterminator Button" /></div>
-        <h2>1 AVAILABLE</h2>
+        <div title="Removes 3 random mines from the board"
+        onclick="renderExtButtonToggle()
+        "class="btn-image exterminator"><img src="img/Exterminator Button.png" alt="Exterminator Button" />
+        </div>
+        <h2 class="exterminator"><span>1</span> AVAILABLE</h2>
       </div>
 
     </div>

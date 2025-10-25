@@ -1,5 +1,6 @@
 'use strict'
 
+const LOGO = '<img src="img/Logo.png" alt="mine" />'
 const MINE = '<img src="img/Cell - Mine.png" alt="mine" />'
 const MINE_RED = '<img src="img/Cell - Red Mine.png" alt="mine" />'
 const COVER = '<img src="img/Cell - Unrevealed.png" alt="cover" />'
@@ -26,5 +27,9 @@ const UNDO_USED = '<img src="img/Undo Button - Used.png" alt="undo-used" />'
 const ETIDOR_X = '<img src="img/Editor Mode - X.png" alt="editor-x" />'
 const ETIDOR_V = '<img src="img/Editor Mode - V.png" alt="editor-y" />'
 const MEGA = '<img src="img/Mega Hint Button.png" alt="mega" />'
+const MEGA_ON = '<img src="img/Mega Hint Button - On.png" alt="mega-on" />'
 const MEGA_USED =
   '<img src="img/Mega Hint Button - Used.png" alt="mega-used" />'
+const EXT = '<img src="img/Exterminator Button.png" alt="Exterminator" />'
+const EXT_USED =
+  '<img src="img/Exterminator Button - Used.png" alt="Exterminator used" />'
