@@ -15,7 +15,7 @@ const HARD_BTN_CLICKED = "url('img/Hard Button - Selected.png')"
 const DARK_MODE = '<img src="img/Mode - Dark.png" alt="dark mode" />'
 const LIGHT_MODE = '<img src="img/Mode - Light.png" alt="light mode" />'
 const HINTS_ON = '<img src="img/Hints Button - On.png" alt="hints-on" />'
-const HINTS_OFF = '<img src="img/Hints Button - OFF.png" alt="hints-off" />'
+const HINTS_OFF = '<img src="img/Hints Button - Off.png" alt="hints-off" />'
 const HINTS_USED = '<img src="img/Hints Button - Used.png" alt="hints-used" />'
 const SAFE_CELL = '<img src="img/Safe Click Button.png" alt="safe cell-used" />'
 const SAFE_CELL_USED =
