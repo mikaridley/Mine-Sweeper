@@ -15,11 +15,11 @@ It's a fully-featured Minesweeper game with many extra functionalities beyond th
 
 <hr>
 
-<h2>Preview 📸</h2>
-<img src="mineSweeperPreview.png" alt="Screenshot of the game">
-
 <h2>Live Demo 🚀</h2>
 <p>You can try the game <a target="_blank" href="https://mikaridley.github.io/Mine-Sweeper/">here</a></p>
+
+<h2>Preview 📸</h2>
+<img src="mineSweeperPreview.png" alt="Screenshot of the game">
 
 <hr>
 
