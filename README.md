@@ -15,6 +15,14 @@ It's a fully-featured Minesweeper game with many extra functionalities beyond th
 
 <hr>
 
+<h2>Preview 📸</h2>
+<img src="mineSweeper.png" alt="Screenshot of the game">
+
+<h2>Live Demo 🚀</h2>
+<p>You can try the game <a href="https://mikaridley.github.io/Mine-Sweeper/">here</a></p>
+
+<hr>
+
 <h2>Features ✨</h2>
 
 <h3>Core Gameplay</h3>
@@ -38,13 +46,6 @@ It's a fully-featured Minesweeper game with many extra functionalities beyond th
   <li><strong>Lives:</strong> Player has 3 lives; clicking a mine loses a life but allows continuation</li>
   <li><strong>Hints:</strong> 3 hints per game – reveal a cell and its neighbors temporarily</li>
   <li><strong>Safe-Click:</strong> 3 safe-clicks per game – reveals a random safe cell temporarily</li>
-  <li><strong>Smiley Button:</strong> Resets the game; changes state depending on game outcome
-    <ul>
-      <li>😃 Normal</li>
-      <li>😢 Sad/Dead – lose</li>
-      <li>😎 Sunglasses – win</li>
-    </ul>
-  </li>
   <li><strong>Dark Mode toggle</strong> for better visual experience</li>
   <li><strong>Undo button</strong> – revert some previous moves</li>
   <li><strong>Mega Hint:</strong> Reveal a rectangular area of the board temporarily</li>
@@ -87,12 +88,6 @@ It's a fully-featured Minesweeper game with many extra functionalities beyond th
   <li>JavaScript (Vanilla)</li>
   <li>DOM Manipulation</li>
 </ul>
-
-<h2>Preview 📸</h2>
-<img src="screenshot.png" alt="Screenshot of the game">
-
-<h2>Live Demo 🚀</h2>
-<p>You can try the game <a href="https://your-live-demo-link.com">here</a></p>
 
 <hr>
 
