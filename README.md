@@ -97,7 +97,7 @@ It's a fully-featured Minesweeper game with many extra functionalities beyond th
   <li>It’s fully functional without any external libraries or frameworks.</li>
 </ul>
 
-<p>Made with ❤️ by <strong>Mika Ridley</strong></p>
+<p>Made by <strong>Mika Ridley</strong></p>
 
 </body>
 </html>
