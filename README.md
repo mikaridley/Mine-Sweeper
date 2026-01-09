@@ -19,7 +19,7 @@ It's a fully-featured Minesweeper game with many extra functionalities beyond th
 <img src="mineSweeperPreview.png" alt="Screenshot of the game">
 
 <h2>Live Demo 🚀</h2>
-<p>You can try the game <a href="https://mikaridley.github.io/Mine-Sweeper/">here</a></p>
+<p>You can try the game <a target="_blank href="https://mikaridley.github.io/Mine-Sweeper/">here</a></p>
 
 <hr>
 
